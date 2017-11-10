@@ -17,6 +17,7 @@ class CrackMagic:
         self.c_pw = c_pw
         self.pw = pw
         self.c_dict = c_dict
+        self.c_dict_l = len(c_dict)
         self.s = s
 
     def getCrackDict(self):
@@ -40,29 +41,41 @@ class CrackMagic:
     def attemptCrack(self, pw):
         if pw:
             self.pw = pw
-        for p_len in range(1, 9):
-            for g in itertools.product(self.c_dict[self.y], repeat=p_len):
-                self.i += 1
-                g = ''.join(g)
-                if g == self.pw[self.x]:
-                    self.c_pw += ''.join(g)
-                    self.y = 0
-                    self.x += 1
-                    print(g, str(self.i), " (Hit!!!)")
-                    if(len(self.pw) == self.x):
-                        e = timer()
-                        print("Password:", self.c_pw,
-                              "\nTime Elapsed:", str(e - self.s))
-                        return self.c_pw, str(e - self.s)
+
+        pw_l = len(self.pw)
+
+        if self.c_dict_l:
+            for p_len in range(1, 9):
+                for g in itertools.product(self.c_dict[self.y], repeat=p_len):
+                    self.i += 1
+                    g = "".join(g)
+
+                    if g == self.pw[self.x]:
+                        self.c_pw += "".join(g)
+                        self.y = 0
+                        self.x += 1
+                        # print("%s %s (Hit!!!)" % (g, self.i))
+
+                        if(pw_l == self.x):
+                            e = timer()
+                            print("Password: %s \nTime Elapsed: %s"
+                                  % (self.c_pw, e - self.s))
+                            self.x = 0
+                            self.c_pw = ''
+                            return True
+
+                        return self.attemptCrack(self.pw)
+                    # print(g, self.i)
+
+                self.y += 1
+
+                if(self.y != c_dict_l):
                     return self.attemptCrack(self.pw)
-                print(g, str(self.i))
-            self.y += 1
-            if(self.y != len(self.c_dict)):
-                return self.attemptCrack(self.pw)
-            else:
-                print("Aborted! A character is not in dictionary!")
-                sys.exit()
+                else:
+                    print("Aborted! A character is not in dictionary!")
+                    return False
 
 
 c = CrackMagic()
-print(c.attemptCrack('C%s6'))
+c.attemptCrack('Ms9at')
+c.attemptCrack('^a%')
