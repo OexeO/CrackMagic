@@ -6,7 +6,11 @@ from timeit import default_timer as timer
 
 class CrackMagic:
 
-    def __init__(self, x=0, y=0, i=0, c_pw='', pw='', c_dict=[string.printable, '0123456789'], s=timer()):
+    def __init__(self,
+                 x=0, y=0, i=0,
+                 c_pw='', pw='',
+                 c_dict=[string.printable, '0123456789'],
+                 s=timer()):
         self.x = x
         self.y = y
         self.i = i
@@ -44,15 +48,21 @@ class CrackMagic:
                     self.c_pw += ''.join(g)
                     self.y = 0
                     self.x += 1
+                    print(g, str(self.i), " (Hit!!!)")
                     if(len(self.pw) == self.x):
                         e = timer()
-                        # print ("Password: "+self.c_pw+"\nTime Elapsed: "+ str(e-self.s))
-                        return self.c_pw, str(e-self.s)
-                    return self.attemptCrack(self.pw)          # recurse after successful crack
-                # print(g, self.i)
+                        print("Password:", self.c_pw,
+                              "\nTime Elapsed:", str(e - self.s))
+                        return self.c_pw, str(e - self.s)
+                    return self.attemptCrack(self.pw)
+                print(g, str(self.i))
             self.y += 1
             if(self.y != len(self.c_dict)):
-                return self.attemptCrack(self.pw)              # try another type
+                return self.attemptCrack(self.pw)
             else:
-                print("Cracking aborted a character is not in dictionary!")
+                print("Aborted! A character is not in dictionary!")
                 sys.exit()
+
+
+c = CrackMagic()
+print(c.attemptCrack('C%s6'))
